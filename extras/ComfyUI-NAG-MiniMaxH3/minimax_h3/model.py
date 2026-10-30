@@ -80,7 +80,11 @@ def nag_attention(x, rope_freqs=None, transformer_options={}, *, attn, seq_len, 
         k = attn.k_norm(k.view(s, attn.heads, attn.head_dim))
 
     out = _attend(attn, q[:seq_len], k[:seq_len], v[:seq_len], transformer_options)
-    out_negative = _attend(attn, q[text_len:], k[text_len:], v[text_len:], transformer_options)
+    # attention overrides such as Model Sparse Attention size their exact-KV sinks from the H3 layout,
+    # which the negative pass does not follow: run it dense so no negative text key gets dropped
+    negative_options = {key: value for key, value in transformer_options.items()
+                        if key != "optimized_attention_override"}
+    out_negative = _attend(attn, q[text_len:], k[text_len:], v[text_len:], negative_options)
     del q, k, v
 
     # out_negative rows are [non-text | negative text]: the guidance overwrites its non-text part

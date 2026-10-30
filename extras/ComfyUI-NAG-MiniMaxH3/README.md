@@ -22,7 +22,7 @@ Replace the stock node with its NAG version, then plug a negative prompt (`CLIPT
 
 `Apply NAG (MiniMax H3)` patches the `MODEL` instead, so any sampler or guider after it uses NAG. Applying NAG a second time replaces the earlier settings.
 
-The inputs are the same as in ComfyUI-NAG: `nag_scale`, `nag_tau`, `nag_alpha` and `nag_sigma_end` (NAG is active only while sigma >= `nag_sigma_end`). The defaults are ComfyUI-NAG's; tune `nag_tau` and `nag_alpha` first, then only `nag_scale`. For image-to-video, reference-to-video and keyframe guides, use lower `nag_tau` and `nag_alpha` to keep the references faithful.
+The NAG inputs are the same as in ComfyUI-NAG (the guiders have no `latent_image` input, H3 samples one video at a time): `nag_scale`, `nag_tau`, `nag_alpha` and `nag_sigma_end` (NAG is active only while sigma >= `nag_sigma_end`). The defaults are ComfyUI-NAG's; tune `nag_tau` and `nag_alpha` first, then only `nag_scale`. For image-to-video, reference-to-video and keyframe guides, use lower `nag_tau` and `nag_alpha` to keep the references faithful.
 
 ## How it works
 
@@ -36,4 +36,4 @@ NAG is installed through ComfyUI's model patches (a diffusion-model wrapper plus
 
 Cost: while NAG is active every block runs a second attention over the non-text rows, about 2x the attention time of the positive pass. Use `nag_sigma_end` to stop it early.
 
-`Model Sparse Attention` replaces the block patches of every node before it, so put it before NAG. On the steps where NAG is active the sparse attention is bypassed.
+`Model Sparse Attention` replaces the block patches of every node before it, so put it before NAG. On the steps where NAG is active, the negative pass runs dense, and the positive pass goes through the sparse attention's generic kernel (dense with VSA).
