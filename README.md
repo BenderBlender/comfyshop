@@ -59,3 +59,7 @@ change the model in `./templates/config.json`  to
 ```
 "qp_generator_model": "juggernaut_aftermath.safetensors",
 ```
+
+# **NAG FOR MINIMAX H3**
+
+`extras/ComfyUI-NAG-MiniMaxH3` adds [NAG](https://github.com/ChenDarYen/ComfyUI-NAG) nodes for MiniMax H3 models. copy that folder into `custom_nodes` too, see its [README](extras/ComfyUI-NAG-MiniMaxH3/README.md)
